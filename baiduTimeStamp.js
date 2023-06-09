@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    https://sxnxcy.com/
-// @version      1.0.0
+// @version      1.0.1
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
+// @run-at       document-start
 // @grant        GM_addStyle
 // @grant        GM_getValue
 // @grant        GM_deleteValue

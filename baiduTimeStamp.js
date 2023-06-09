@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    https://sxnxcy.com/
-// @version      1.0.4
+// @version      1.0.6
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -54,6 +54,7 @@ function test() {
 }
 document.addEventListener('DOMContentLoaded', function () {
     initCustomPanel();
+    document.querySelector("legend").innerText = "时间戳检测配置 " + GM_info.script.version
     localStorage.yzm = 1
     document.querySelector('#sl').value = localStorage.sl
     if (localStorage.sl == undefined) {
@@ -92,7 +93,7 @@ function initCustomPanel() {
     panel.className = 'chrome-plugin-demo-panel';
     panel.innerHTML = `
 	<fieldset class="layui-elem-field">
-				<legend>时间戳检测配置</legend>
+				<legend id="mc">时间戳检测配置</legend>
 				<div class="layui-field-box">
 					<div class="layui-row layui-col-space5">
 						<div class="layui-col-xs6">

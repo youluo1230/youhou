@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    https://sxnxcy.com/
-// @version      1.0.2
+// @version      1.0.3
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0

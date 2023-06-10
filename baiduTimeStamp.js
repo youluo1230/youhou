@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    https://sxnxcy.com/
-// @version      1.0.7
+// @version      1.0.8
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -18,7 +18,7 @@
 // ==/UserScript==
 
 (function () {
-    console.log("脚本注入成功", layui.v);
+    console.log("脚本注入成功", GM_info.script.version);
     GM_addStyle(`@import url('https://unpkg.com/layui@2.8.6/dist/css/layui.css');
     .chrome-plugin-demo-panel {
         position: fixed;
@@ -29,38 +29,94 @@
         height: 800px;
         margin-right: 30px;
     }
-    #progress-bar {
-        width: 500px;
-        height: 10px;
-        background-color: #f0f0f0;
-        border-radius: 10px;
-        overflow: hidden;
-      }
-      #progress {
-        height: 100%;
-        background-color: #007bff;
-        width: 0%;
-        transition: width 0.3s ease-in-out;
-      }
-    #progress-text {
-        line-height: 20px;
-        text-align: center;
-        color: #ffffff;
-      }
+    #pzdv{
+        position: fixed;
+        right: 0;
+        bottom: 30px;
+        padding: 40px;
+        margin-right: 40px;
+    }
     `);
-    test()
 })();
-function test() {
-}
+let nbHtml = `
+<fieldset class="layui-elem-field">
+            <div class="layui-field-box">
+                <div class="layui-row layui-col-space5">
+                    <div class="layui-col-xs6">
+                        <input type="text" id="sl" placeholder="输入需要的数量" class="layui-input" value="1">
+                    </div>
+                    <div class="layui-col-xs6">
+                        <input type="text" id="ms" placeholder="增加时间秒数" class="layui-input" value="3600">
+                    </div>
+                </div>
+                <div class="layui-row layui-col-space5">
+                    <div class="layui-col-xs12">
+                        <textarea id="gjc" placeholder="请输入关键词" class="layui-textarea"
+                            style="height: 200px;"></textarea>
+                    </div>
+                </div>
+                <div class="layui-row layui-col-space5">
+                    <div class="layui-col-xs12">
+                    <textarea id="wz" placeholder="请输入域名或者链接" class="layui-textarea"
+                    style="height: 200px;"></textarea>
+                    </div>
+                </div>
+                <div class="layui-row layui-col-space5">
+                    <div class="layui-col-xs12">
+                        <textarea id="jg" placeholder="" class="layui-textarea"
+                            style="height: 200px;"></textarea>
+                    </div>
+                </div>
+                <div class="layui-row">
+                    <div class="layui-progress layui-progress-big" lay-showPercent="true" lay-filter="demo-filter-progress">
+                        <div id="jdt" class="layui-progress-bar" lay-percent="0%">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-row layui-col-space5">
+                <hr class="ws-space-16">
+                    <button id="saveStart" class="layui-btn layui-btn-primary layui-border-blue">开始</button>
+                    <button id="copy" class="layui-btn layui-btn-primary layui-border-green">复制结果</button>
+                    <button id="clyzm" class="layui-btn layui-btn-primary layui-border-red">已处理验证码</button>
+                    <button id="test" class="layui-btn layui-btn-primary layui-border-red">测试</button>
+                </div>
+            </div>
+        </fieldset>
+`;
 document.addEventListener('DOMContentLoaded', function () {
-    initCustomPanel();
-    document.querySelector("legend").innerText = "时间戳检测配置 " + GM_info.script.version
+    insertPage();
     localStorage.yzm = 1
+    $("#pzan").click(function () {
+        layer.open({
+            type: 1,
+            title: "时间戳配置",
+            offset: 'auto',
+            anim: 'slideLeft', // 从右往左
+            area: ['650px', '80%'],
+            shade: 0.1,
+            shadeClose: true,
+            id: 'ID-demo-layer-direction-r',
+            content: nbHtml
+        });
+        configurationButtonEvent()
+    });
+})
+function sendMessage(title, message) {
+    GM_notification({
+        text: message,
+        title: title,
+        timeout: 5000, // 通知显示时间，单位为毫秒，默认为 4000 毫秒
+        onclick: function () {
+        }
+    });
+}
+// 配置按钮事件
+function configurationButtonEvent() {
     document.querySelector('#sl').value = localStorage.sl
+    document.querySelector('#ms').value = localStorage.ms
     if (localStorage.sl == undefined) {
         document.querySelector('#sl').value = 1
     }
-    document.querySelector('#ms').value = localStorage.ms
     if (localStorage.ms == undefined) {
         document.querySelector('#ms').value = 3600
     }
@@ -73,19 +129,19 @@ document.addEventListener('DOMContentLoaded', function () {
         $("#jg").blur()
         sendMessage('百度搜索', '已复制到剪贴板');
     })
-    $("#test").click(function () {
+    $("#clyzm").click(function () {
         localStorage.yzm == 1;
         console.log(layui);
     });
-})
-function sendMessage(title, message) {
-    GM_notification({
-        text: message,
-        title: title,
-        timeout: 5000, // 通知显示时间，单位为毫秒，默认为 4000 毫秒
-        onclick: function () {
-        }
+    $("#test").click(function () {
+        jdtup(50)
     });
+}
+
+// 进度条更新
+function jdtup(bfb) {
+    layui.element.progress('demo-filter-progress', bfb + "%")
+    document.querySelector("#jdt").innerText = bfb + "%"
 }
 
 function initCustomPanel() {
@@ -137,11 +193,21 @@ function initCustomPanel() {
 	`;
     document.body.appendChild(panel);
 }
+
+function insertPage() {
+    var panel = document.createElement('div');
+    panel.id = 'pzdv';
+    let html = `<button id="pzan" type="button" class="layui-btn layui-btn-primary" lay-on="test-offset-r"></button>`
+    panel.innerHTML = html
+    document.body.appendChild(panel);
+    document.querySelector("#pzan").innerText = "开启配置页面 当前版本:" + GM_info.script.version
+}
+
 // 任务处理
 async function rw(gjc, wz, zjsj, sl) {
     localStorage.ms = document.querySelector('#ms').value
     localStorage.sl = document.querySelector('#sl').value
-    updateProgressBar(0)
+    jdtup(0)
     let arr = [];
     let gjcsz = gjc.trim().split("\n")
     let wzsz = wz.trim().split("\n")
@@ -152,7 +218,7 @@ async function rw(gjc, wz, zjsj, sl) {
     for (let index = 0; index < gjcsz.length; index++) {
         let la = await getApi(gjcsz[index], wzsz[index], zjsj, sl)
         arr.push(...la)
-        updateProgressBar(Math.floor((index + 1) / gjcsz.length * 100))
+        jdtup(Math.floor((index + 1) / gjcsz.length * 100))
         await delayedAction()
     }
     $("#jg").val(arr.join("\n"))
@@ -184,19 +250,6 @@ async function getApi(gjc, wz, zjsj, sl) {
         }
     }
     return arr
-}
-// 进度条更新
-function updateProgressBar(progress) {
-    const progressBar = document.getElementById('progress');
-    const progressText = document.getElementById('progress-text');
-
-    progressBar.style.width = `${progress}%`;
-    progressText.innerText = `${progress}%`;
-}
-// 进度条更新
-function updateProgress(progress) {
-    // 在这里调用 updateProgressBar 函数来更新进度条位置
-    updateProgressBar(progress);
 }
 // 延迟
 function sleep(ms) {

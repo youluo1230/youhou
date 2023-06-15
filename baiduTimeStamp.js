@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         百度时间戳处理
-// @namespace    https://blog.sxnxcy.com/
+// @namespace    http://blog.sxnxcy.com/
 // @version      1.0.9
 // @description  时间戳
 // @author       xiaobao

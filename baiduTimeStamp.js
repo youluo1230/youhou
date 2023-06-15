@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
-// @namespace    https://sxnxcy.com/
-// @version      1.0.8
+// @namespace    https://blog.sxnxcy.com/
+// @version      1.0.9
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -14,7 +14,9 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_notification
 // @match        *://*.baidu.com/*
+// @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js
 // @require      https://unpkg.com/layui@2.8.6/dist/layui.js
+
 // ==/UserScript==
 
 (function () {
@@ -39,7 +41,6 @@
     `);
 })();
 let nbHtml = `
-<fieldset class="layui-elem-field">
             <div class="layui-field-box">
                 <div class="layui-row layui-col-space5">
                     <div class="layui-col-xs6">
@@ -49,39 +50,48 @@ let nbHtml = `
                         <input type="text" id="ms" placeholder="增加时间秒数" class="layui-input" value="3600">
                     </div>
                 </div>
-                <div class="layui-row layui-col-space5">
+                <div class="layui-row">
                     <div class="layui-col-xs12">
                         <textarea id="gjc" placeholder="请输入关键词" class="layui-textarea"
                             style="height: 200px;"></textarea>
                     </div>
                 </div>
-                <div class="layui-row layui-col-space5">
+                <div class="layui-row">
                     <div class="layui-col-xs12">
                     <textarea id="wz" placeholder="请输入域名或者链接" class="layui-textarea"
                     style="height: 200px;"></textarea>
                     </div>
                 </div>
-                <div class="layui-row layui-col-space5">
+                <div class="layui-row">
                     <div class="layui-col-xs12">
                         <textarea id="jg" placeholder="" class="layui-textarea"
                             style="height: 200px;"></textarea>
                     </div>
                 </div>
+
                 <div class="layui-row">
+                <hr>
                     <div class="layui-progress layui-progress-big" lay-showPercent="true" lay-filter="demo-filter-progress">
                         <div id="jdt" class="layui-progress-bar" lay-percent="0%">
                         </div>
                     </div>
                 </div>
                 <div class="layui-row layui-col-space5">
-                <hr class="ws-space-16">
+                    <hr>
+                    <select id="sslx" style="margin-right: 10px;">
+                        <option value="0" selected>搜关键词</option>
+                        <option value="1">搜链接</option>
+                    </select>
+                    <select id="btlx" style="margin-right: 10px;">
+                        <option value="0" selected>PC标题</option>
+                        <option value="1">移动标题</option>
+                    </select>
                     <button id="saveStart" class="layui-btn layui-btn-primary layui-border-blue">开始</button>
                     <button id="copy" class="layui-btn layui-btn-primary layui-border-green">复制结果</button>
                     <button id="clyzm" class="layui-btn layui-btn-primary layui-border-red">已处理验证码</button>
-                    <button id="test" class="layui-btn layui-btn-primary layui-border-red">测试</button>
+                    <button id="butTest" class="layui-btn layui-btn-primary layui-border-red">测试</button>
                 </div>
             </div>
-        </fieldset>
 `;
 document.addEventListener('DOMContentLoaded', function () {
     insertPage();
@@ -131,10 +141,9 @@ function configurationButtonEvent() {
     })
     $("#clyzm").click(function () {
         localStorage.yzm == 1;
-        console.log(layui);
     });
-    $("#test").click(function () {
-        jdtup(50)
+    $("#butTest").click(function () {
+        console.log(111);
     });
 }
 
@@ -207,6 +216,8 @@ function insertPage() {
 async function rw(gjc, wz, zjsj, sl) {
     localStorage.ms = document.querySelector('#ms').value
     localStorage.sl = document.querySelector('#sl').value
+    let btlx = document.querySelector("#btlx").value
+    let sslx = document.querySelector("#sslx").value
     jdtup(0)
     let arr = [];
     let gjcsz = gjc.trim().split("\n")
@@ -216,7 +227,7 @@ async function rw(gjc, wz, zjsj, sl) {
         return false
     }
     for (let index = 0; index < gjcsz.length; index++) {
-        let la = await getApi(gjcsz[index], wzsz[index], zjsj, sl)
+        let la = await getApi(gjcsz[index], wzsz[index], zjsj, sl, btlx, sslx)
         arr.push(...la)
         jdtup(Math.floor((index + 1) / gjcsz.length * 100))
         await delayedAction()
@@ -225,28 +236,33 @@ async function rw(gjc, wz, zjsj, sl) {
     sendMessage('百度搜索', '任务完成');
 }
 // 单任务处理
-async function getApi(gjc, wz, zjsj, sl) {
+async function getApi(gjc, wz, zjsj, sl, btlx, sslx) {
     let arr = [];
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://www.baidu.com/s?wd=' + gjc + '&tn=json', false);  // 替换为你要发送请求的 URL，并将第三个参数设置为 false
-    xhr.send();
-    if (xhr.readyState === 4 && xhr.status === 200) {
-        let response = xhr.responseText;
-        let dx = JSON.parse(response)
-        for (let index = 0; index < dx.feed.entry.length; index++) {
-            if (dx.feed.entry[index].hasOwnProperty('url')) {
-                if (dx.feed.entry[index] != {} && dx.feed.entry[index].url.indexOf(wz) > -1) {
-                    let strat = dx.feed.entry[index].time
-                    let end = strat + zjsj
-                    let s1 = gjc + '|' + dx.feed.entry[index].title + "|" + dx.feed.entry[index].url + "|" + strat + "," + end
-                    if (await jsonVerify(gjc, strat + ',' + end, wz)) {
-                        arr.push(s1)
+    let sgjc = gjc;
+    if (sslx == "1") {
+        sgjc = wz
+    }
+    let url = 'https://www.baidu.com/s?wd=' + sgjc + '&tn=json&rn=50'
+    let str = await syncGet(url)
+    let dx = JSON.parse(str)
+    for (let index = 0; index < dx.feed.entry.length; index++) {
+        if (dx.feed.entry[index].hasOwnProperty('url')) {
+            if (dx.feed.entry[index] != {} && dx.feed.entry[index].url.indexOf(wz) > -1) {
+                let strat = dx.feed.entry[index].time
+                let end = strat + zjsj
+                let lsbt = dx.feed.entry[index].title
+                let url = dx.feed.entry[index].url
+                if (await jsonVerify(gjc, strat + ',' + end, wz)) {
+                    if (btlx == "1") {
+                        lsbt = await mobileTitleFetch(url)
                     }
+                    let s1 = gjc + '|' + lsbt + "|" + url + "|" + strat + "," + end
+                    arr.push(s1)
                 }
             }
-            if (arr.length >= sl) {
-                break;
-            }
+        }
+        if (arr.length >= sl) {
+            break;
         }
     }
     return arr
@@ -257,29 +273,12 @@ function sleep(ms) {
         setTimeout(resolve, ms);
     });
 }
-
+// json 验证
 async function jsonVerify(gjc, sjc, url) {
-    let xhr = new XMLHttpRequest();
-    while (true) {
-        if (localStorage.yzm == 1 && xhr.readyState == 0) {
-            xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://www.baidu.com/s?wd=' + gjc + '&tn=json&gpc=stf=' + sjc + '&inputT=' + (Math.floor(Math.random() * (6000 - 2000 + 1)) + 2000));  // 替换为你要发送请求的 URL，并将第三个参数设置为 false
-            xhr.send();
-        }
-        await delayedAction()
-        if (xhr.readyState === 4) {
-            if (xhr.status == 302 && localStorage.yzm != 0) {
-                localStorage.yzm = 0
-                window.open(xhr.responseURL)
-                sendMessage("百度搜索", "出现验证码请手动处理")
-            }
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                break
-            }
-        }
-    }
-    if (xhr.readyState === 4 && xhr.status === 200) {
-        let jsdx = JSON.parse(xhr.responseText)
+    let lj = 'https://www.baidu.com/s?wd=' + gjc + '&tn=json&gpc=stf=' + sjc + '&inputT=' + (Math.floor(Math.random() * (6000 - 2000 + 1)) + 2000)
+    let str = await syncGet(lj)
+    try {
+        let jsdx = JSON.parse(str)
         for (let index = 0; index < jsdx.feed.entry.length; index++) {
             if (jsdx.feed.entry[index].hasOwnProperty('url')) {
                 let furl = jsdx.feed.entry[index].url
@@ -288,10 +287,60 @@ async function jsonVerify(gjc, sjc, url) {
                 }
             }
         }
+    } catch (error) {
+        console.log("jsonVerify错误:" + error);
+        return false
+    }
+
+    return false
+}
+
+// 移动标题获取
+async function mobileTitleFetch(lj) {
+    let url = 'https://m.baidu.com/s?word=' + lj
+    let str = await syncGet(url)
+    let parser = new DOMParser();
+    let doc = parser.parseFromString(str, 'text/html');
+    let sz = doc.querySelectorAll(".c-result.result");
+    for (let index = 0; index < sz.length; index++) {
+        let j = sz[index].getAttribute("data-log")
+        if (j && sz[index].querySelector("h3")) {
+            j = JSON.parse(j)
+            let mu = j.mu;
+            let lsbt = sz[index].querySelector("h3").innerText;
+            console.log(mu, lsbt);
+            if (mu == lj) {
+                return lsbt;
+            }
+        }
     }
     return false
 }
 //延迟执行
-async function delayedAction() {
-    await sleep(1000);
+async function delayedAction(s) {
+    if (s == null | s == undefined) {
+        s = 1000
+    }
+    await sleep(s);
+}
+
+
+async function syncGet(url) {
+    let xhr = null
+    while (true) {
+        if (localStorage.yzm == "1") {
+            xhr = await fetch(url)
+        }
+        if (xhr && xhr.redirected === true) {
+            localStorage.yzm = "0"
+            sendMessage("百度搜索", "请手动处理验证码")
+            window.open(xhr.url)
+        } else { //ok
+            return await xhr.text()
+        }
+        if (localStorage.yzm == "0") {
+            await delayedAction(1000 * 60)
+            console.log("等待验证码处理中...");
+        }
+    }
 }

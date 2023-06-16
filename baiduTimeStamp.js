@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.1.8
+// @version      1.2.0
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -267,7 +267,13 @@ async function getApi(gjc, wz, zjsj, sl, btlx, sslx) {
                 let url = dx.feed.entry[index].url
                 if (await jsonVerify(gjc, strat + ',' + end, wz)) {
                     if (btlx == "1") {
-                        lsbt = await mobileTitleFetch(gjc, url, strat + "," + end)
+                        let jg = await mobileTitleFetch(gjc, url, strat + "," + end)
+                        if (!jg.hasOwnProperty('mu')) {
+                            lsbt = jg
+                        } else {
+                            lsbt = jg.lsbt
+                            url = jg.mu
+                        }
                     }
                     let s1 = gjc + '|' + lsbt + "|" + url + "|" + strat + "," + end
                     console.log({ gjc, lsbt, url, strat, end });
@@ -322,8 +328,8 @@ async function mobileTitleFetch(gjc, lj, sjc) {
             j = JSON.parse(j)
             let mu = j.mu;
             let lsbt = sz[index].querySelector("h3").innerText;
-            if (mu == lj) {
-                return lsbt;
+            if (getDomain(mu, lj)) {
+                return { lsbt, mu };
             }
         }
     }
@@ -448,4 +454,10 @@ function calculateTimestamp(timestamp) {
     var newTimestamp = Math.floor(date.getTime() / 1000);
 
     return newTimestamp;
+}
+// 获取主域名
+function getDomain(url, url2) {
+    url = url.replaceAll("http://www.", "").replaceAll("https://www.", "").replaceAll("http://m.", "").replaceAll("https://m.", "")
+    url2 = url2.replaceAll("http://www.", "").replaceAll("https://www.", "").replaceAll("http://m.", "").replaceAll("https://m.", "")
+    return url == url2
 }

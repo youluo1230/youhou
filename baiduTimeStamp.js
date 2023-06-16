@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.1.6
+// @version      1.1.7
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -233,6 +233,7 @@ async function rw(gjc, wz, zjsj, sl) {
         let la = await getApi(gjcsz[index], wzsz[index], zjsj, sl, btlx, sslx)
         arr.push(...la)
         jdtup(Math.floor((index + 1) / gjcsz.length * 100))
+        $("#jg").val(arr.join("\n"))
         await delayedAction()
     }
     $("#jg").val(arr.join("\n"))
@@ -356,6 +357,7 @@ async function pcResultPage(chtml, wz, gjc, zjsj) {
         }
 
     }
+    return res
 }
 
 //延迟执行

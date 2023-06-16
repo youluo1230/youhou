@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.1.1
+// @version      1.1.2
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -259,7 +259,7 @@ async function getApi(gjc, wz, zjsj, sl, btlx, sslx) {
                 let url = dx.feed.entry[index].url
                 if (await jsonVerify(gjc, strat + ',' + end, wz)) {
                     if (btlx == "1") {
-                        lsbt = await mobileTitleFetch(url)
+                        lsbt = await mobileTitleFetch(gjc, url, strat + "," + end)
                     }
                     let s1 = gjc + '|' + lsbt + "|" + url + "|" + strat + "," + end
                     console.log({ gjc, lsbt, url, strat, end });
@@ -302,8 +302,8 @@ async function jsonVerify(gjc, sjc, url) {
 }
 
 // 移动标题获取
-async function mobileTitleFetch(lj) {
-    let url = 'https://m.baidu.com/s?word=' + lj
+async function mobileTitleFetch(gjc, lj, sjc) {
+    let url = "https://m.baidu.com/s?wd=" + gjc + "&gpc=stf=" + sjc + "%7Cstftype%3D1"
     let str = await syncGet2(url)
     let parser = new DOMParser();
     let doc = parser.parseFromString(str, 'text/html');
@@ -314,13 +314,12 @@ async function mobileTitleFetch(lj) {
             j = JSON.parse(j)
             let mu = j.mu;
             let lsbt = sz[index].querySelector("h3").innerText;
-            //console.log(mu, lsbt);
             if (mu == lj) {
                 return lsbt;
             }
         }
     }
-    return false
+    return "移动标题获取失败"
 }
 //延迟执行
 async function delayedAction(s) {
@@ -366,7 +365,7 @@ async function syncGet2(url) {
             window.open(xhr.responseURL)
         } else { //ok
             if (xhr && xhr.responseURL.indexOf("wappass.baidu.com") == -1) {
-                await delayedAction(1000)
+                await delayedAction(500)
                 return xhr.responseText
             }
         }

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.1.5
+// @version      1.1.6
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -252,7 +252,8 @@ async function getApi(gjc, wz, zjsj, sl, btlx, sslx) {
     if (sslx == "3") { //百度搜索页面匹配
         url = 'https://www.baidu.com/s?wd=' + encodeURIComponent(wz) + '&rn=50'
         let str = await syncGet2(url)
-        return pcResultPage(str, wz, gjc, zjsj)
+        arr = await pcResultPage(str, wz, gjc, zjsj)
+        return arr
     }
     let str = await syncGet2(url) //json接口匹配
     let dx = JSON.parse(str)
@@ -328,12 +329,13 @@ async function mobileTitleFetch(gjc, lj, sjc) {
     return "移动标题获取失败"
 }
 // pc结果页面匹配时间戳
-function pcResultPage(chtml, wz, gjc, zjsj) {
+async function pcResultPage(chtml, wz, gjc, zjsj) {
     let parser = new DOMParser();
     let doc = parser.parseFromString(chtml, 'text/html');
     let sz = doc.querySelectorAll("#content_left [srcid]")
     let res = []
-    sz.forEach(a => {
+    for (let index = 0; index < sz.length; index++) {
+        let a = sz[index];
         if (a.querySelector(".c-color-gray2") != null) {
             let sjbq = a.querySelector(".c-color-gray2").innerText
             let ljbt = a.querySelector("h3").innerText
@@ -341,13 +343,19 @@ function pcResultPage(chtml, wz, gjc, zjsj) {
             if (start != "") {
                 let lj = a.getAttribute("mu");
                 if (lj == wz) {
-                    let zh = gjc + "|" + ljbt + "|" + lj + "|" + start + "," + (start + zjsj)
-                    res.push(zh)
+                    let sjc = start + "," + (start + zjsj)
+                    let zh = gjc + "|" + ljbt + "|" + lj + "|" + sjc
+                    if (await jsonVerify(gjc, sjc, lj)) {
+                        res.push(zh)
+                    } else {
+                        console.log(zh, "时间戳验证失败不计入");
+                    }
+                    return res
                 }
             }
         }
-    })
-    return res
+
+    }
 }
 
 //延迟执行

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.1.0
+// @version      1.1.1
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
             anim: 'slideLeft', // 从右往左
             area: ['650px', '80%'],
             shade: 0.1,
-            shadeClose: true,
+            shadeClose: false,
             id: 'ID-demo-layer-direction-r',
             content: nbHtml
         });
@@ -141,7 +141,8 @@ function configurationButtonEvent() {
         sendMessage('百度搜索', '已复制到剪贴板');
     })
     $("#clyzm").click(function () {
-        localStorage.yzm == 1;
+        localStorage.yzm = "1";
+        console.log(localStorage.yzm);
     });
     $("#butTest").click(function () {
         console.log(111);
@@ -247,7 +248,7 @@ async function getApi(gjc, wz, zjsj, sl, btlx, sslx) {
         sgjc = gjc + " site:" + wz
     }
     let url = 'https://www.baidu.com/s?wd=' + sgjc + '&tn=json&rn=50'
-    let str = await syncGet(url)
+    let str = await syncGet2(url)
     let dx = JSON.parse(str)
     for (let index = 0; index < dx.feed.entry.length; index++) {
         if (dx.feed.entry[index].hasOwnProperty('url')) {
@@ -281,7 +282,7 @@ function sleep(ms) {
 // json 验证
 async function jsonVerify(gjc, sjc, url) {
     let lj = 'https://www.baidu.com/s?wd=' + gjc + '&tn=json&gpc=stf=' + sjc + '&inputT=' + (Math.floor(Math.random() * (6000 - 2000 + 1)) + 2000)
-    let str = await syncGet(lj)
+    let str = await syncGet2(lj)
     try {
         let jsdx = JSON.parse(str)
         for (let index = 0; index < jsdx.feed.entry.length; index++) {
@@ -303,7 +304,7 @@ async function jsonVerify(gjc, sjc, url) {
 // 移动标题获取
 async function mobileTitleFetch(lj) {
     let url = 'https://m.baidu.com/s?word=' + lj
-    let str = await syncGet(url)
+    let str = await syncGet2(url)
     let parser = new DOMParser();
     let doc = parser.parseFromString(str, 'text/html');
     let sz = doc.querySelectorAll(".c-result.result");
@@ -336,16 +337,41 @@ async function syncGet(url) {
         if (localStorage.yzm == "1") {
             xhr = await fetch(url)
         }
-        if (xhr && xhr.redirected === true) {
+        if (localStorage.yzm == "1" && xhr && xhr.redirected === true) {
             localStorage.yzm = "0"
             sendMessage("百度搜索", "请手动处理验证码")
             window.open(xhr.url)
         } else { //ok
-            return await xhr.text()
+            if (xhr) {
+                return await xhr.text()
+            }
         }
         if (localStorage.yzm == "0") {
-            await delayedAction(1000 * 60)
             console.log("等待验证码处理中...");
+            await delayedAction(1000 * 15)
+        }
+    }
+}
+async function syncGet2(url) {
+    let xhr = null
+    while (true) {
+        if (localStorage.yzm == "1") {
+            xhr = new XMLHttpRequest();
+            xhr.open('GET', url, false); // 同步请求
+            xhr.send();
+        }
+        if (localStorage.yzm == "1" && xhr && (xhr.responseURL.indexOf("wappass.baidu.com") > -1)) {
+            localStorage.yzm = "0"
+            sendMessage("百度搜索", "请手动处理验证码")
+            window.open(xhr.responseURL)
+        } else { //ok
+            if (xhr && xhr.responseURL.indexOf("wappass.baidu.com") == -1) {
+                return xhr.responseText
+            }
+        }
+        if (localStorage.yzm == "0") {
+            console.log("等待验证码处理中...");
+            await delayedAction(1000 * 15)
         }
     }
 }

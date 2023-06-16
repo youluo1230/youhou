@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.2.0
+// @version      1.2.1
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -265,19 +265,20 @@ async function getApi(gjc, wz, zjsj, sl, btlx, sslx) {
                 let end = strat + zjsj
                 let lsbt = dx.feed.entry[index].title
                 let url = dx.feed.entry[index].url
+                let jg = true
                 if (await jsonVerify(gjc, strat + ',' + end, wz)) {
                     if (btlx == "1") {
-                        let jg = await mobileTitleFetch(gjc, url, strat + "," + end)
-                        if (!jg.hasOwnProperty('mu')) {
-                            lsbt = jg
-                        } else {
+                        jg = await mobileTitleFetch(gjc, url, strat + "," + end)
+                        if (jg.hasOwnProperty('mu')) {
                             lsbt = jg.lsbt
                             url = jg.mu
                         }
                     }
-                    let s1 = gjc + '|' + lsbt + "|" + url + "|" + strat + "," + end
-                    console.log({ gjc, lsbt, url, strat, end });
-                    arr.push(s1)
+                    if (jg != false) {
+                        let s1 = gjc + '|' + lsbt + "|" + url + "|" + strat + "," + end
+                        console.log({ gjc, lsbt, url, strat, end });
+                        arr.push(s1)
+                    }
                 }
             }
         }
@@ -333,7 +334,7 @@ async function mobileTitleFetch(gjc, lj, sjc) {
             }
         }
     }
-    return "移动标题获取失败"
+    return false
 }
 // pc结果页面匹配时间戳
 async function pcResultPage(chtml, wz, gjc, zjsj) {

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.0.9
+// @version      1.1.0
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -81,6 +81,7 @@ let nbHtml = `
                     <select id="sslx" style="margin-right: 10px;">
                         <option value="0" selected>搜关键词</option>
                         <option value="1">搜链接</option>
+                        <option value="2">站内搜索</option>
                     </select>
                     <select id="btlx" style="margin-right: 10px;">
                         <option value="0" selected>PC标题</option>
@@ -242,6 +243,9 @@ async function getApi(gjc, wz, zjsj, sl, btlx, sslx) {
     if (sslx == "1") {
         sgjc = wz
     }
+    if (sslx == "2") {
+        sgjc = gjc + " site:" + wz
+    }
     let url = 'https://www.baidu.com/s?wd=' + sgjc + '&tn=json&rn=50'
     let str = await syncGet(url)
     let dx = JSON.parse(str)
@@ -257,6 +261,7 @@ async function getApi(gjc, wz, zjsj, sl, btlx, sslx) {
                         lsbt = await mobileTitleFetch(url)
                     }
                     let s1 = gjc + '|' + lsbt + "|" + url + "|" + strat + "," + end
+                    console.log({ gjc, lsbt, url, strat, end });
                     arr.push(s1)
                 }
             }
@@ -308,7 +313,7 @@ async function mobileTitleFetch(lj) {
             j = JSON.parse(j)
             let mu = j.mu;
             let lsbt = sz[index].querySelector("h3").innerText;
-            console.log(mu, lsbt);
+            //console.log(mu, lsbt);
             if (mu == lj) {
                 return lsbt;
             }

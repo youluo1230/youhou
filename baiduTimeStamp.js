@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.1.4
+// @version      1.1.5
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -243,14 +243,14 @@ async function getApi(gjc, wz, zjsj, sl, btlx, sslx) {
     let arr = [];
     let sgjc = gjc;
     if (sslx == "1") {
-        sgjc = wz
+        sgjc = encodeURIComponent(wz)
     }
     if (sslx == "2") {
         sgjc = gjc + " site:" + wz
     }
     let url = 'https://www.baidu.com/s?wd=' + sgjc + '&tn=json&rn=50'
     if (sslx == "3") { //百度搜索页面匹配
-        url = 'https://www.baidu.com/s?wd=' + wz + '&rn=50'
+        url = 'https://www.baidu.com/s?wd=' + encodeURIComponent(wz) + '&rn=50'
         let str = await syncGet2(url)
         return pcResultPage(str, wz, gjc, zjsj)
     }

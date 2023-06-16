@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.1.3
+// @version      1.1.4
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -82,6 +82,7 @@ let nbHtml = `
                         <option value="0" selected>搜关键词</option>
                         <option value="1">搜链接</option>
                         <option value="2">站内搜索</option>
+                        <option value="3">PC结果链接匹配</option>
                     </select>
                     <select id="btlx" style="margin-right: 10px;">
                         <option value="0" selected>PC标题</option>
@@ -248,7 +249,12 @@ async function getApi(gjc, wz, zjsj, sl, btlx, sslx) {
         sgjc = gjc + " site:" + wz
     }
     let url = 'https://www.baidu.com/s?wd=' + sgjc + '&tn=json&rn=50'
-    let str = await syncGet2(url)
+    if (sslx == "3") { //百度搜索页面匹配
+        url = 'https://www.baidu.com/s?wd=' + wz + '&rn=50'
+        let str = await syncGet2(url)
+        return pcResultPage(str, wz, gjc, zjsj)
+    }
+    let str = await syncGet2(url) //json接口匹配
     let dx = JSON.parse(str)
     for (let index = 0; index < dx.feed.entry.length; index++) {
         if (dx.feed.entry[index].hasOwnProperty('url')) {
@@ -321,6 +327,29 @@ async function mobileTitleFetch(gjc, lj, sjc) {
     }
     return "移动标题获取失败"
 }
+// pc结果页面匹配时间戳
+function pcResultPage(chtml, wz, gjc, zjsj) {
+    let parser = new DOMParser();
+    let doc = parser.parseFromString(chtml, 'text/html');
+    let sz = doc.querySelectorAll("#content_left [srcid]")
+    let res = []
+    sz.forEach(a => {
+        if (a.querySelector(".c-color-gray2") != null) {
+            let sjbq = a.querySelector(".c-color-gray2").innerText
+            let ljbt = a.querySelector("h3").innerText
+            let start = getDateFromString(sjbq)
+            if (start != "") {
+                let lj = a.getAttribute("mu");
+                if (lj == wz) {
+                    let zh = gjc + "|" + ljbt + "|" + lj + "|" + start + "," + (start + zjsj)
+                    res.push(zh)
+                }
+            }
+        }
+    })
+    return res
+}
+
 //延迟执行
 async function delayedAction(s) {
     if (s == null | s == undefined) {
@@ -374,4 +403,39 @@ async function syncGet2(url) {
             await delayedAction(1000 * 15)
         }
     }
+}
+
+//匹配时间戳
+function getDateFromString(str) {
+    var reg = /(\d+)年(\d+)月(\d+)日/;
+    var s = str.match(reg);
+    var result = "";
+    if (s) {
+        result = new Date(s[1], s[2] - 1, s[3]).getTime() / 1000;
+        return result
+    }
+    if (str.indexOf("小时") > -1) {
+        let xs = str.match(/\d+/)[0]
+        let date = new Date();
+        return Math.floor(date.setHours(date.getHours() - (Number(xs) + 1)) / 1000); // 减去小时+1
+    }
+    if (str.indexOf("天前") > -1) {
+        let t = str.match(/\d+/)[0]
+        let date = new Date();
+        return calculateTimestamp(Math.floor(date.setDate(date.getDate() - Number(t)) / 1000)); // 减去天
+    }
+    return result;
+}
+
+// 时间戳转日期不带时分秒时间戳
+function calculateTimestamp(timestamp) {
+    var date = new Date(timestamp * 1000);
+
+    // 将时、分、秒、毫秒都设置为 0
+    date.setHours(0, 0, 0, 0);
+
+    // 获取零点时间的秒级时间戳
+    var newTimestamp = Math.floor(date.getTime() / 1000);
+
+    return newTimestamp;
 }

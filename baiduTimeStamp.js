@@ -366,6 +366,7 @@ async function syncGet2(url) {
             window.open(xhr.responseURL)
         } else { //ok
             if (xhr && xhr.responseURL.indexOf("wappass.baidu.com") == -1) {
+                await delayedAction(1000)
                 return xhr.responseText
             }
         }

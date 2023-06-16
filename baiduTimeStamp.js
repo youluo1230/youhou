@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.2.1
+// @version      1.2.2
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -43,11 +43,14 @@
 let nbHtml = `
             <div class="layui-field-box">
                 <div class="layui-row layui-col-space5">
-                    <div class="layui-col-xs6">
+                    <div class="layui-col-xs4">
                         <input type="text" id="sl" placeholder="输入需要的数量" class="layui-input" value="1">
                     </div>
-                    <div class="layui-col-xs6">
+                    <div class="layui-col-xs4">
                         <input type="text" id="ms" placeholder="增加时间秒数" class="layui-input" value="3600">
+                    </div>
+                    <div class="layui-col-xs4">
+                        <input type="text" id="sssl" placeholder="搜索数量" class="layui-input" value="50">
                     </div>
                 </div>
                 <div class="layui-row">
@@ -126,11 +129,15 @@ function sendMessage(title, message) {
 function configurationButtonEvent() {
     document.querySelector('#sl').value = localStorage.sl
     document.querySelector('#ms').value = localStorage.ms
+    document.querySelector('#sssl').value = localStorage.sssl
     if (localStorage.sl == undefined) {
         document.querySelector('#sl').value = 1
     }
     if (localStorage.ms == undefined) {
         document.querySelector('#ms').value = 3600
+    }
+    if (localStorage.sssl == undefined) {
+        document.querySelector('#sssl').value = 50
     }
     $("#saveStart").click(() => {
         rw($("#gjc").val(), $("#wz").val(), Number($("#ms").val()), Number($("#sl").val()))
@@ -219,8 +226,10 @@ function insertPage() {
 async function rw(gjc, wz, zjsj, sl) {
     localStorage.ms = document.querySelector('#ms').value
     localStorage.sl = document.querySelector('#sl').value
+    localStorage.sssl = document.querySelector('#sssl').value
     let btlx = document.querySelector("#btlx").value
     let sslx = document.querySelector("#sslx").value
+    let sssl = document.querySelector("#sssl").value
     jdtup(0)
     let arr = [];
     let gjcsz = gjc.trim().split("\n")
@@ -230,7 +239,7 @@ async function rw(gjc, wz, zjsj, sl) {
         return false
     }
     for (let index = 0; index < gjcsz.length; index++) {
-        let la = await getApi(gjcsz[index], wzsz[index], zjsj, sl, btlx, sslx)
+        let la = await getApi(gjcsz[index], wzsz[index], zjsj, sl, btlx, sslx, sssl)
         arr.push(...la)
         jdtup(Math.floor((index + 1) / gjcsz.length * 100))
         $("#jg").val(arr.join("\n"))
@@ -240,7 +249,7 @@ async function rw(gjc, wz, zjsj, sl) {
     sendMessage('百度搜索', '任务完成');
 }
 // 单任务处理
-async function getApi(gjc, wz, zjsj, sl, btlx, sslx) {
+async function getApi(gjc, wz, zjsj, sl, btlx, sslx, sssl) {
     let arr = [];
     let sgjc = gjc;
     if (sslx == "1") {
@@ -249,7 +258,7 @@ async function getApi(gjc, wz, zjsj, sl, btlx, sslx) {
     if (sslx == "2") {
         sgjc = gjc + " site:" + wz
     }
-    let url = 'https://www.baidu.com/s?wd=' + sgjc + '&tn=json&rn=50'
+    let url = 'https://www.baidu.com/s?wd=' + sgjc + '&tn=json&rn=' + sssl
     if (sslx == "3") { //百度搜索页面匹配
         url = 'https://www.baidu.com/s?wd=' + encodeURIComponent(wz) + '&rn=50'
         let str = await syncGet2(url)

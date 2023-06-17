@@ -18,7 +18,7 @@ const dom = {};
 dom.query = jQuery.noConflict(true);
 dom.query(document).ready(function ($) {
     'use strict';
-    const detection_cycle = 500;
+    const detection_cycle = 1000;
     setInterval(() => {
         $(".ec_wise_ad").remove()
         $("#page-copyright").remove()

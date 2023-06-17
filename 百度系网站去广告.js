@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度系网站去广告
 // @namespace    http://tampermonkey.net/
-// @version      5.4.3
+// @version      5.4.4
 // @icon         https://www.baidu.com/favicon.ico
 // @description  去除百度搜索结果和页面中的绝大多数广告，包括：百度搜索、百度百科、百度知道、百度文库、百度贴吧等
 // @author       CodeLumos
@@ -13,12 +13,7 @@
 // @grant        GM_setValue
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js
 // ==/UserScript==
-
-const dom = {};
-dom.query = jQuery.noConflict(true);
-dom.query(document).ready(function ($) {
-    'use strict';
-    const detection_cycle = 1000;
+document.addEventListener('DOMContentLoaded', function () {
     setInterval(() => {
         $(".ec_wise_ad").remove()
         $("#page-copyright").remove()
@@ -37,8 +32,7 @@ dom.query(document).ready(function ($) {
                 }
             }
         })
-    }, detection_cycle);
-});
-
+    }, 3000);
+})
 
 

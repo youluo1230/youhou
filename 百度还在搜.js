@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度还在搜
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.0.0
+// @version      1.0.1
 // @description  还在搜
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
     $("#pzan").click(function () {
         layer.open({
             type: 1,
-            title: "打开配置",
+            title: "还在搜配置",
             offset: 'auto',
             anim: 'slideLeft', // 从右往左
             area: ['650px', '40%'],

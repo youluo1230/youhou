@@ -1,11 +1,10 @@
 // ==UserScript==
-// @name         百度系网站去广告
+// @name         百度移动去广告
 // @namespace    http://tampermonkey.net/
-// @version      5.4.5
+// @version      5.4.6
 // @icon         https://www.baidu.com/favicon.ico
-// @description  去除百度搜索结果和页面中的绝大多数广告，包括：百度搜索、百度百科、百度知道、百度文库、百度贴吧等
-// @author       CodeLumos
-// @homepageURL  https://github.com/codelumos/tampermonkey-scripts
+// @description  这只针对百度移动 也去除掉了底部总要打开app
+// @author       xiaobao
 // @match        *://*.baidu.com/*
 // @run-at       document-start
 // @grant        GM_addStyle

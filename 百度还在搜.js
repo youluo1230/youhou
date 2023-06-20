@@ -2,6 +2,7 @@
 // @name         百度还在搜
 // @namespace    http://blog.sxnxcy.com/
 // @version      1.0.1
+// @icon         https://www.baidu.com/favicon.ico
 // @description  还在搜
 // @author       xiaobao
 // @license      CC-BY-4.0

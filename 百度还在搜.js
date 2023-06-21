@@ -65,8 +65,6 @@ let nbHtml = `
                 <div class="layui-row layui-col-space5">
                     <hr>
                     <button id="saveStart" class="layui-btn layui-btn-primary layui-border-blue">开始</button>
-                    <button id="copy" class="layui-btn layui-btn-primary layui-border-green">复制结果</button>
-                    <button id="clyzm" class="layui-btn layui-btn-primary layui-border-red">已处理验证码</button>
                     <button id="butTest" class="layui-btn layui-btn-primary layui-border-red">下载结果</button>
                 </div>
             </div>
@@ -107,16 +105,6 @@ function configurationButtonEvent() {
             rw($("#gjc").val())
         }, 500)
     })
-    $("#copy").click(() => {
-        $("#jg").select()
-        document.execCommand('copy');
-        $("#jg").blur()
-        sendMessage('百度搜索', '已复制到剪贴板');
-    })
-    $("#clyzm").click(function () {
-        localStorage.yzm = "1";
-        console.log(localStorage.yzm);
-    });
     $("#butTest").click(function () {
         xz();
     });

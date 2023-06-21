@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度还在搜
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.0.1
+// @version      1.0.2
 // @icon         https://www.baidu.com/favicon.ico
 // @description  还在搜
 // @author       xiaobao
@@ -263,6 +263,7 @@ async function syncGet2(url) {
         }
         if (localStorage.yzm == "0") {
             console.log("等待验证码处理中...");
+            await delayedAction(10000)
             debugger
         }
     }

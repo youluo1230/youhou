@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度还在搜
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.0.2
+// @version      1.0.3
 // @icon         https://www.baidu.com/favicon.ico
 // @description  还在搜
 // @author       xiaobao
@@ -182,8 +182,8 @@ async function rw(gjc) {
     let level = Number(document.querySelector("#cj").value)
     let gjcsz = gjc.trim().split("\n")
     for (let index = 0; index < gjcsz.length; index++) {
-        console.log("当前执行：" + gjc);
-        levelInit(gjc, level)
+        console.log("当前执行：" + gjcsz[index]);
+        levelInit(gjcsz[index], level)
         await singleTaskProcessing(gjcsz[index], gjcsz[index], 1, level, "")
         jdtup(Math.floor((index + 1) / gjcsz.length * 100))
         await delayedAction()

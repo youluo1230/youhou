@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         排名查询
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.0.0
+// @version      1.0.1
 // @description  搜索引擎排名查询
 // @author       xiaobao
 // @license      CC-BY-4.0

@@ -167,6 +167,9 @@ async function singleTaskProcessing(gjc, ym, ys, sl) {
         case "www.baidu.com":
             baiduPc(gjc, ym, ys, sl)
             break;
+        case "m.baidu.com":
+            baiduYd(gjc, ym, ys, sl)
+            break;
         case "so.toutiao.com":
             touduPc(gjc, ym, ys, sl)
             break;
@@ -199,6 +202,32 @@ async function baiduPc(gjc, ym, ys, sl) {
         }
     }
 }
+async function baiduYd(gjc, ym, ys, sl) {
+    let dt = document.getElementById('checkbox1').checked
+    for (let index = 0; index < ys; index++) {
+        url = "https://m.baidu.com/s?word=" + encodeURIComponent(gjc) + "&pn=" + index * sl
+        let str = await syncGet2(url) //json接口匹配
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(str, 'text/html');
+        let bqsz = doc.querySelectorAll(".c-result.result");
+        for (let bq of bqsz) {
+            if (bq.querySelector("H3") != null) {
+                let xjson = JSON.parse(bq.getAttribute("data-log"))
+                let dz = xjson.mu
+                let pm = xjson.order + index * 10
+                let bt = bq.querySelector("H3").innerText
+                if (getDomain(dz, ym)) {
+                    zarr.push([gjc, pm, ym, dz, bt])
+                    zjg.push([gjc, pm, ym, dz, bt])
+                    if (dt) {
+                        return //取单条返回
+                    }
+                }
+            }
+        }
+    }
+}
+
 async function touduPc(gjc, ym, ys, sl) {
     let dt = document.getElementById('checkbox1').checked
     for (let index = 0; index < ys; index++) {

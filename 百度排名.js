@@ -2,7 +2,7 @@
 // @name         排名查询
 // @namespace    http://blog.sxnxcy.com/
 // @version      1.0.0
-// @description  排名查询
+// @description  搜索引擎排名查询
 // @author       xiaobao
 // @license      CC-BY-4.0
 // @run-at       document-start

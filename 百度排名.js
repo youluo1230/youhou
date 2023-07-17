@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         排名查询
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.0.1
+// @version      1.0.2
 // @description  搜索引擎排名查询
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -55,11 +55,11 @@ let nbHtml = `
                 <div class="layui-row">
                     <div class="layui-col-xs12">
                         <textarea id="gjc" placeholder="请输入关键词" class="layui-textarea"
-                            style="height: 200px;">九方智投 site:www.9fzt.com</textarea>
+                            style="height: 200px;"></textarea>
                     </div>
                     <div class="layui-col-xs12">
                         <textarea id="ym" placeholder="域名或者链接" class="layui-textarea"
-                            style="height: 200px;">www.9fzt.com</textarea>
+                            style="height: 200px;"></textarea>
                     </div>
                 </div>
                 <div class="layui-row">

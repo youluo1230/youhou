@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         排名查询
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.0.3
+// @version      1.0.4
 // @description  搜索引擎排名查询
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -330,6 +330,9 @@ async function syncGet2(url) {
 
 // 链接对比模糊对比 
 function getDomain(url, url2) {
+    if (url==null || url2==null) {
+        return false
+    }
     url = url.replaceAll("http://", "").replaceAll("https://", "")
     url2 = url2.replaceAll("http://", "").replaceAll("https://", "")
     return url.indexOf(url2) > -1

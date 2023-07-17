@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         排名查询
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.0.2
+// @version      1.0.3
 // @description  搜索引擎排名查询
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -72,6 +72,7 @@ let nbHtml = `
                 <div class="layui-row layui-col-space5">
                     <hr>
                     <button id="saveStart" class="layui-btn layui-btn-primary layui-border-blue">开始</button>
+                    <button id="clyzm" class="layui-btn layui-btn-primary layui-border-red">已处理验证码</button>
                     <button id="butTest" class="layui-btn layui-btn-primary layui-border-red">下载结果</button>
                     <div class="layui-form">
                         <input id="checkbox1" type="checkbox" name="" title="只取一条">
@@ -121,6 +122,10 @@ function configurationButtonEvent() {
     })
     $("#butTest").click(function () {
         xz();
+    });
+    $("#clyzm").click(function () {
+        localStorage.yzm = "1";
+        console.log(localStorage.yzm);
     });
 }
 // 进度条更新
@@ -194,6 +199,7 @@ async function baiduPc(gjc, ym, ys, sl) {
                 if (getDomain(dz, ym)) {
                     zarr.push([gjc, pm, ym, dz, bt])
                     zjg.push([gjc, pm, ym, dz, bt])
+                    console.log(gjc, pm, ym, dz, bt);
                     if (dt) {
                         return //取单条返回
                     }
@@ -219,6 +225,7 @@ async function baiduYd(gjc, ym, ys, sl) {
                 if (getDomain(dz, ym)) {
                     zarr.push([gjc, pm, ym, dz, bt])
                     zjg.push([gjc, pm, ym, dz, bt])
+                    console.log(gjc, pm, ym, dz, bt);
                     if (dt) {
                         return //取单条返回
                     }
@@ -260,6 +267,7 @@ async function touduPc(gjc, ym, ys, sl) {
                 if (getDomain(dz, ym)) {
                     zarr.push([gjc, pm, ym, dz, bt])
                     zjg.push([gjc, pm, ym, dz, bt])
+                    console.log(gjc, pm, ym, dz, bt);
                     if (dt) {
                         return //取单条返回
                     }

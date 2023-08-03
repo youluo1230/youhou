@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度还在搜
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.0.4
+// @version      1.0.5
 // @icon         https://www.baidu.com/favicon.ico
 // @description  还在搜
 // @author       xiaobao
@@ -224,6 +224,7 @@ async function singleTaskProcessing(gjc, sgjc, level, levelt, url) {
         zarr.push([level, gjc, a.innerText])
         console.log(level, gjc, a.innerText, a.href);
         await singleTaskProcessing(gjc, a.innerText, level + 1, levelt, a.href)
+        await delayedAction(150)
     }
 }
 // 延迟

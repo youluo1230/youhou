@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度还在搜
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.0.3
+// @version      1.0.4
 // @icon         https://www.baidu.com/favicon.ico
 // @description  还在搜
 // @author       xiaobao
@@ -67,6 +67,8 @@ let nbHtml = `
                     <button id="saveStart" class="layui-btn layui-btn-primary layui-border-blue">开始</button>
                     <button id="butTest" class="layui-btn layui-btn-primary layui-border-red">下载结果</button>
                 </div>
+                <hr>
+                <iframe id="nqcs" src="https://www.baidu.com/" frameborder="0" width="100%" height="300"></iframe>
             </div>
 `;
 let zjg = []
@@ -80,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
             title: "还在搜配置",
             offset: 'auto',
             anim: 'slideLeft', // 从右往左
-            area: ['650px', '40%'],
+            area: ['650px', '60%'],
             shade: 0.1,
             shadeClose: false,
             id: 'ID-demo-layer-direction-r',
@@ -107,6 +109,12 @@ function configurationButtonEvent() {
     })
     $("#butTest").click(function () {
         xz();
+    });
+    $("#clyzm").click(function () {
+        localStorage.yzm = "1"
+    });
+    $("#copyjg").click(function () {
+        jgclcopy()
     });
 }
 // 进度条更新
@@ -224,6 +232,17 @@ function sleep(ms) {
         setTimeout(resolve, ms);
     });
 }
+function jgclcopy() {
+    let t = ""
+    for (let index = 0; index < zarr.length; index++) {
+        t = t + zarr[index].join("-") + "\n"
+    }
+    $("#jg").val(t)
+    $("#jg").select()
+    document.execCommand('copy');
+    $("#jg").blur()
+    sendMessage('百度搜索', '已复制到剪贴板');
+}
 //延迟执行
 async function delayedAction(s) {
     if (s == null | s == undefined) {
@@ -255,7 +274,7 @@ async function syncGet2(url) {
         if (localStorage.yzm == "1" && xhr && (xhr.responseURL.indexOf("wappass.baidu.com") > -1)) {
             localStorage.yzm = "0"
             sendMessage("百度搜索", "请手动处理验证码")
-            window.open(xhr.responseURL)
+            document.querySelector("#nqcs").src = xhr.responseURL
         } else { //ok
             if (xhr && xhr.responseURL.indexOf("wappass.baidu.com") == -1) {
                 return xhr.responseText
@@ -264,7 +283,9 @@ async function syncGet2(url) {
         if (localStorage.yzm == "0") {
             console.log("等待验证码处理中...");
             await delayedAction(10000)
-            debugger
+            if (document.querySelector("#nqcs").src.indexOf("wappass.baidu.com") == -1) {
+                localStorage.yzm = "1"
+            }
         }
     }
 }

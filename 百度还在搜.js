@@ -41,6 +41,24 @@
         margin-right: 40px;
     }
     `);
+    document.addEventListener('DOMContentLoaded', function () {
+        insertPage();
+        localStorage.yzm = 1
+        $("#pzan").click(function () {
+            layer.open({
+                type: 1,
+                title: "还在搜配置",
+                offset: 'auto',
+                anim: 'slideLeft', // 从右往左
+                area: ['650px', '60%'],
+                shade: 0.1,
+                shadeClose: false,
+                id: 'ID-demo-layer-direction-r',
+                content: nbHtml
+            });
+            configurationButtonEvent()
+        });
+    })
 })();
 let nbHtml = `
             <div class="layui-field-box">

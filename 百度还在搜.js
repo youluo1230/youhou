@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度还在搜
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.0.6
+// @version      1.0.7
 // @icon         https://www.baidu.com/favicon.ico
 // @description  还在搜
 // @author       xiaobao
@@ -15,9 +15,9 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_notification
 // @match        *://*.baidu.com/*
-// @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js
+// @require      https://cdn.staticfile.org/jquery/3.7.0/jquery.min.js
 // @require      https://unpkg.com/layui@2.8.6/dist/layui.js
-// @require      https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.core.min.js
+// @require      https://cdn.staticfile.org/xlsx/0.18.5/xlsx.core.min.js
 
 // ==/UserScript==
 

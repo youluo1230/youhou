@@ -20,7 +20,7 @@
 // ==/UserScript==
 
 (function () {
-    console.log("脚本注入成功", GM_info.script.version);
+    //console.log("脚本注入成功", GM_info.script.version);
     GM_addStyle(`@import url('https://unpkg.com/layui@2.8.6/dist/css/layui.css');
     .chrome-plugin-demo-panel {
         position: fixed;

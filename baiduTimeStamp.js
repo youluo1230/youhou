@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度时间戳处理
 // @namespace    http://blog.sxnxcy.com/
-// @version      1.2.2
+// @version      1.2.3
 // @description  时间戳
 // @author       xiaobao
 // @license      CC-BY-4.0
@@ -334,10 +334,16 @@ async function mobileTitleFetch(gjc, lj, sjc) {
     let sz = doc.querySelectorAll(".c-result.result");
     for (let index = 0; index < sz.length; index++) {
         let j = sz[index].getAttribute("data-log")
-        if (j && sz[index].querySelector("h3")) {
+        if (j) {
             j = JSON.parse(j)
             let mu = j.mu;
-            let lsbt = sz[index].querySelector("h3").innerText;
+            let lsbt = ""
+            if (sz[index].querySelector("h3") != null) {
+                lsbt = sz[index].querySelector("h3").innerText;
+            }
+            if (sz[index].querySelector(".tts-b-hl") != null) {
+                lsbt = sz[index].querySelector(".tts-b-hl").innerText;
+            }
             if (getDomain(mu, lj)) {
                 return { lsbt, mu };
             }
